@@ -1,0 +1,8 @@
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:krita="http://krita.org/namespaces/svg/krita">
+ <linearGradient spreadMethod="pad" id="plastic chess brown" gradientUnits="objectBoundingBox">
+  <stop stop-opacity="1" stop-color="#000000" offset="0" krita:stop-type="color-stop"/>
+  <stop stop-opacity="1" stop-color="#28112d" offset="0.2129" krita:stop-type="color-stop"/>
+  <stop stop-opacity="1" stop-color="#6f3d2e" offset="0.4948" krita:stop-type="color-stop"/>
+  <stop stop-opacity="1" stop-color="#d1be98" offset="0.716075" krita:stop-type="color-stop"/>
+ </linearGradient>
+</svg>
