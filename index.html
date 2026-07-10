@@ -86,12 +86,21 @@
     --light:#f2dcab; --dark:#b06a35; --void:#0f1014; --frontier:#6a5232; --ghost:#473420;
     --p1:#f4f6fb; --p2:#15171d; --accent:#e8923a; --accent2:#c2722a; --good:#6bbf4a; --warn:#f3a83a;
     --gap:clamp(4px,1vw,12px);
-    --card-w:max(56px, min(116px, calc((100vw - 540px)/7)));  /* nebeneinander: passt neben die Steuerelemente */
-    --pile-w:clamp(40px,8.5vw,62px); --pile-h:calc(var(--pile-w)*1.42);
-    --cell:clamp(30px,6.2vmin,70px); --bar:calc(var(--card-w)*1.72);
+    --card-w:max(56px, min(126px, calc((100vw - 540px)/7)));  /* nebeneinander: passt neben die Steuerelemente */
+    --pile-w:clamp(40px,8.5vw,72px); --pile-h:calc(var(--pile-w)*1.42);
+    --cell:clamp(30px,6.4vmin,80px); --bar:calc(var(--card-w)*1.72);
     --pixel:"Press Start 2P","Courier New",monospace;
     --body:"VT323","Courier New",monospace;
     --hand:var(--body);
+    /* Fluide Schriftgrößen: skalieren auf Handy runter, auf großen Screens gedeckelt lesbar */
+    --fz-xs:clamp(11px,2.2vw,13px);
+    --fz-sm:clamp(12.5px,2.6vw,15px);
+    --fz-md:clamp(14px,3vw,17px);
+    --fz-lg:clamp(16px,3.4vw,20px);
+    --fz-btn:clamp(15px,3vw,18px);
+    --fz-h3:clamp(17px,3.7vw,23px);
+    --fz-h2:clamp(20px,4.6vw,30px);
+    --fz-h1:clamp(24px,6vw,34px);
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0}
@@ -177,12 +186,12 @@
   .pile.exile .ex i{font-size:10px;font-style:normal;font-weight:800;color:var(--accent2);vertical-align:super;margin-left:-2px}
 
   .disclist{display:flex;flex-direction:column;gap:5px;margin:6px 0 14px;min-width:240px;max-height:50vh;overflow:auto}
-  .disclist .row{display:flex;align-items:center;gap:10px;font-size:14px;padding:4px 7px;border-radius:8px;background:#ead4a6;border:2px solid var(--ink)}
+  .disclist .row{display:flex;align-items:center;gap:10px;font-size:var(--fz-sm);padding:4px 7px;border-radius:8px;background:#ead4a6;border:2px solid var(--ink)}
   .disclist .row .ic{font-size:22px;width:26px;text-align:center}
   .disclist .row .n{margin-left:auto;font-weight:800;color:var(--accent2)}
 
   .stage{position:fixed;top:var(--bar);bottom:var(--bar);left:0;right:0;
-    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;overflow:auto;padding:8px}
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;overflow:hidden;padding:8px}   /* keine Scrollleisten: Brett wird per Kamera geschoben/gezoomt */
   .boardwrap{justify-self:center;perspective:1400px;position:relative}
   #board{display:grid;grid-template-columns:repeat(10,var(--cell));grid-template-rows:repeat(10,var(--cell));
     border:6px solid var(--ink);border-radius:8px;overflow:hidden;
@@ -191,11 +200,7 @@
   .cell.light{background:var(--light)} .cell.dark{background:var(--dark)}
   .cell.void{background:var(--void)} .cell.frontier{background:var(--frontier);box-shadow:inset 0 0 0 1px #00000033}
   .cell.ghost{background:var(--ghost);box-shadow:inset 0 0 0 1px #00000033}
-  .coord{position:absolute;font-family:var(--body);font-weight:800;font-size:calc(var(--cell)*.24);line-height:1;color:rgba(38,22,8,.6);text-shadow:0 1px 1px rgba(255,255,255,.45);pointer-events:none;z-index:2}
-  .coord.cl{left:calc(var(--cell)*.06);top:50%;transform:translateY(-50%)}
-  .coord.cr{right:calc(var(--cell)*.06);top:50%;transform:translateY(-50%)}
-  .coord.ct{top:calc(var(--cell)*.04);left:50%;transform:translateX(-50%)}
-  .coord.cb{bottom:calc(var(--cell)*.04);left:50%;transform:translateX(-50%)}
+  .coordf{position:absolute;transform:translate(-50%,-50%);font-family:var(--body);font-weight:800;line-height:1;color:rgba(38,22,8,.6);text-shadow:0 1px 1px rgba(255,255,255,.45);pointer-events:none;z-index:0}
   .cell.target{cursor:pointer;box-shadow:inset 0 0 0 4px var(--good)}
   .cell.target::before{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:rgba(107,191,74,.6)}
   .cell.target.haspiece::before{width:100%;height:100%;border-radius:0;background:rgba(226,86,63,.32);box-shadow:inset 0 0 0 4px #e2563f}
@@ -211,14 +216,14 @@
   .tetmini{width:1em;height:1em;display:inline-block;vertical-align:middle}
   .cardimg{height:1.15em;width:auto;vertical-align:middle;object-fit:contain;filter:drop-shadow(0 1px 1px rgba(0,0,0,.4))}
   #testbar{display:flex;flex-direction:column;gap:6px;--card-w:clamp(72px,10vw,104px)}
-  .tphead{font-weight:800;font-size:13px;margin:2px 0 4px;color:var(--ink);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .tpprog{background:#2f7d32;color:#fff;border-radius:10px;padding:1px 8px;font-size:12px}
-  .tpreset{margin-left:auto;background:#ead4a6;border:2px solid var(--ink);border-radius:7px;padding:3px 8px;font-size:11px;font-weight:700;color:var(--ink);cursor:pointer}
+  .tphead{font-weight:800;font-size:var(--fz-sm);margin:2px 0 4px;color:var(--ink);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .tpprog{background:#2f7d32;color:#fff;border-radius:10px;padding:1px 8px;font-size:var(--fz-xs)}
+  .tpreset{margin-left:auto;background:#ead4a6;border:2px solid var(--ink);border-radius:7px;padding:3px 8px;font-size:var(--fz-xs);font-weight:700;color:var(--ink);cursor:pointer}
   .tpreset:hover{background:var(--accent)}
   .tpcat{display:flex;flex-direction:column}
-  .tpcatbtn{width:100%;text-align:left;padding:7px 9px;border:2px solid var(--ink);border-radius:8px;background:#e3cc98;font-weight:800;font-size:13px;color:var(--ink);cursor:pointer;box-shadow:2px 2px 0 rgba(0,0,0,.2)}
+  .tpcatbtn{width:100%;text-align:left;padding:7px 9px;border:2px solid var(--ink);border-radius:8px;background:#e3cc98;font-weight:800;font-size:var(--fz-sm);color:var(--ink);cursor:pointer;box-shadow:2px 2px 0 rgba(0,0,0,.2)}
   .tpcatbtn.open{background:var(--accent);color:#2a1500}
-  .tpcatbtn .tpn{float:right;opacity:.7;font-size:11px;font-weight:700}
+  .tpcatbtn .tpn{float:right;opacity:.7;font-size:var(--fz-xs);font-weight:700}
   .tpcards{display:grid;grid-template-columns:repeat(auto-fill,var(--card-w));gap:7px;padding:8px 2px 4px;justify-content:center}
   .tpcard{cursor:pointer;transition:transform .08s;position:relative}
   .tpcard .handcard{cursor:pointer}
@@ -232,15 +237,15 @@
     padding:14px 30px;border-radius:16px;border:3px solid #fff;box-shadow:0 8px 24px rgba(0,0,0,.5);opacity:0}
   .testwin.show{animation:testwinpop 1.7s ease forwards}
   @keyframes testwinpop{0%{opacity:0;transform:translateX(-50%) scale(.7)}12%{opacity:1;transform:translateX(-50%) scale(1.05)}22%{transform:translateX(-50%) scale(1)}72%{opacity:1}100%{opacity:0;transform:translateX(-50%) scale(1)}}
-  .tptip{position:fixed;display:none;z-index:90;max-width:250px;background:#fff8ea;color:#3a2b12;border:2px solid var(--ink);border-radius:10px;padding:8px 11px;font-size:12.5px;line-height:1.35;box-shadow:0 6px 18px rgba(0,0,0,.35);pointer-events:none}
-  .tptip b{font-size:13.5px;display:block;margin-bottom:2px}
+  .tptip{position:fixed;display:none;z-index:90;max-width:250px;background:#fff8ea;color:#3a2b12;border:2px solid var(--ink);border-radius:10px;padding:8px 11px;font-size:var(--fz-sm);line-height:1.35;box-shadow:0 6px 18px rgba(0,0,0,.35);pointer-events:none}
+  .tptip b{font-size:var(--fz-sm);display:block;margin-bottom:2px}
   /* ---- Kampagne ---- */
-  #campBody h2{font-size:24px;margin:0 0 6px}
-  #campBody p{color:var(--muted);margin:6px 0}
-  .campstat{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;font-size:14px}
+  #campBody h2{font-size:var(--fz-h2);margin:0 0 6px}
+  #campBody p{color:var(--muted);margin:6px 0;font-size:var(--fz-md)}
+  .campstat{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;font-size:var(--fz-sm)}
   .campbtns{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
   .stageladder{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
-  .stagedot{width:28px;height:28px;border-radius:50%;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;background:#e7d2a4;color:var(--ink)}
+  .stagedot{width:28px;height:28px;border-radius:50%;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:var(--fz-xs);font-weight:800;background:#e7d2a4;color:var(--ink)}
   .stagedot.done{background:#2f7d32;color:#fff}
   .stagedot.cur{background:var(--accent);color:#2a1500;box-shadow:0 0 0 3px rgba(212,160,60,.45)}
   .draftrow{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:16px}
@@ -250,6 +255,46 @@
   .draftcard .dcimg img{height:66px;width:auto;object-fit:contain}
   .draftcard .dctitle{font-weight:800;font-size:15px;margin-top:6px;color:var(--ink)}
   .draftcard .dcdesc{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.3}
+  /* Kampagne: Run-Auswahl */
+  .runrow{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:16px 0}
+  .runcard{width:150px;border:2px solid var(--ink);border-radius:14px;background:#f4e7c9;padding:14px 10px;text-align:center;cursor:pointer;transition:transform .08s;box-shadow:3px 4px 0 rgba(0,0,0,.25)}
+  .runcard:hover{transform:translateY(-5px);outline:3px solid var(--accent)}
+  .runcard.locked{opacity:.55;cursor:not-allowed;filter:grayscale(.6)}
+  .runcard.locked:hover{transform:none;outline:none}
+  .runemoji{font-size:clamp(32px,7vw,44px);line-height:1}
+  .runname{font-weight:800;font-size:var(--fz-md);margin-top:6px;color:var(--ink)}
+  .runmeta{font-size:var(--fz-xs);color:var(--muted);margin-top:4px}
+  .runlock{font-size:var(--fz-xs);color:#b33;margin-top:6px}
+  .stagelist{margin:6px 0 0;padding-left:20px;font-size:var(--fz-sm);color:var(--muted)}
+  .stagelist li{margin:2px 0}
+  /* Kampagne: Sammlung */
+  .colrow{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 12px}
+  .colcard{width:78px;border:2px solid var(--ink);border-radius:10px;background:#f4e7c9;padding:6px 4px;text-align:center;position:relative;box-shadow:2px 3px 0 rgba(0,0,0,.2)}
+  .colcard img{height:44px;width:auto;object-fit:contain}
+  .colcard .cnm{display:block;font-size:var(--fz-xs);font-weight:700;color:var(--ink);line-height:1.1;margin-top:2px}
+  .colcard .cct{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#2a1500;border:2px solid var(--ink);border-radius:10px;font-size:var(--fz-xs);font-weight:800;padding:0 5px}
+  /* Kampagne: Booster-Pack */
+  .boosterwrap{display:flex;justify-content:center}
+  .pack{width:150px;height:210px;border-radius:16px;border:3px solid var(--ink);background:linear-gradient(135deg,#7a56a6,#3a2b53);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:5px 7px 0 rgba(0,0,0,.35);margin:20px auto}
+  .packinner{display:flex;flex-direction:column;align-items:center;font-size:clamp(40px,10vw,58px);gap:10px}
+  .packinner span{font-size:var(--fz-sm);font-weight:800}
+  .pack.shake{animation:pshake 1.3s ease-in-out infinite}
+  @keyframes pshake{0%,100%{transform:rotate(0) scale(1)}25%{transform:rotate(-4deg) scale(1.04)}75%{transform:rotate(4deg) scale(1.04)}}
+  .brow{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:18px 0;perspective:1000px}
+  .bcard{width:140px;height:196px}
+  .bcflip{position:relative;width:100%;height:100%;transform-style:preserve-3d;transform:rotateY(180deg);animation:bflip .6s forwards}
+  @keyframes bflip{to{transform:rotateY(0deg)}}
+  .bcback,.bcface{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;border:3px solid var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:3px 4px 0 rgba(0,0,0,.3)}
+  .bcback{background:linear-gradient(135deg,#7a56a6,#3a2b53);color:#fff;font-size:clamp(40px,10vw,58px);transform:rotateY(180deg)}
+  .bcface{background:#f4e7c9;padding:8px}
+  .bcimg img{height:104px;width:auto;object-fit:contain}
+  .bcname{font-weight:800;font-size:var(--fz-sm);margin-top:6px;color:var(--ink);text-align:center}
+  .bcrar{font-size:var(--fz-xs);color:var(--muted);margin-top:2px}
+  .bcard.common .bcface{border-color:#7a8a99}
+  .bcard.rare .bcface{border-color:#1e40af;box-shadow:0 0 14px 2px rgba(59,130,246,.8),3px 4px 0 rgba(0,0,0,.3)}
+  .bcard.rare .bcrar{color:#1e40af}
+  .bcard.epic .bcface{border-color:#b45309;box-shadow:0 0 18px 4px rgba(245,158,11,.85),3px 4px 0 rgba(0,0,0,.3)}
+  .bcard.epic .bcrar{color:#b45309;font-weight:800}
   body.test .handbar{display:none}
   body.test .stage{top:12px;bottom:12px}
   body.test .side{width:clamp(340px,34vw,560px);height:calc(100vh - 24px);max-height:none}   /* Übungsmodus: breiteres Panel mit fester Höhe, Inhalt scrollt intern */
@@ -264,34 +309,34 @@
 
   .side{justify-self:start;width:300px;max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:10px;
     position:relative;z-index:10;background:var(--panel);padding:16px;border-radius:16px;border:3px solid var(--ink);box-shadow:5px 6px 0 rgba(0,0,0,.35)}
-  .side h1{font-size:22px;margin:0;color:var(--ink)}
-  .turnbadge{display:inline-block;padding:5px 14px;border-radius:20px;font-weight:700;font-size:16px;border:3px solid var(--ink)}
+  .side h1{font-size:var(--fz-lg);margin:0;color:var(--ink)}
+  .turnbadge{display:inline-block;padding:5px 14px;border-radius:20px;font-weight:700;font-size:var(--fz-md);border:3px solid var(--ink)}
   .turnbadge.t1{background:#fbf1d8;color:#2a1a0a} .turnbadge.t2{background:#2c1d0f;color:#f4e7c9}
-  .moveflag{font-size:13.5px;color:var(--text)} .moveflag b{color:var(--ink)}
-  .hint{color:#6b5226;font-size:13px;min-height:18px}
+  .moveflag{font-size:var(--fz-sm);color:var(--text)} .moveflag b{color:var(--ink)}
+  .hint{color:#6b5226;font-size:var(--fz-sm);min-height:18px}
   .ctrl{display:flex;flex-direction:column;gap:8px}
-  button.act{background:#ead4a6;color:var(--ink);border:3px solid var(--ink);border-radius:10px;padding:9px;cursor:pointer;font-size:13px;font-weight:700;font-family:var(--hand);box-shadow:2px 3px 0 rgba(0,0,0,.25);transition:.1s}
+  button.act{background:#ead4a6;color:var(--ink);border:3px solid var(--ink);border-radius:10px;padding:9px;cursor:pointer;font-size:var(--fz-sm);font-weight:700;font-family:var(--hand);box-shadow:2px 3px 0 rgba(0,0,0,.25);transition:.1s}
   button.act:hover{background:#f1deb2;transform:translate(-1px,-1px);box-shadow:3px 4px 0 rgba(0,0,0,.3)}
   button.act:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(0,0,0,.25)}
   button.act:disabled{opacity:.55;cursor:default;transform:none;box-shadow:2px 3px 0 rgba(0,0,0,.2)}
-  button.primary{background:var(--accent);color:#2a1500;font-size:15px;padding:12px}
+  button.primary{background:var(--accent);color:#2a1500;font-size:var(--fz-btn);padding:12px}
   button.primary:hover{background:#f4a755}
-  .log{font-size:12.5px;max-height:120px;overflow:auto}
-  .log h3{margin:0 0 6px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+  .log{font-size:var(--fz-sm);max-height:120px;overflow:auto}
+  .log h3{margin:0 0 6px;font-size:var(--fz-xs);color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
   .log div{padding:2px 0;border-bottom:1px solid #d8c08c;color:#4a3a22}
-  .rules{font-size:12px;color:#6b5226;line-height:1.5} .rules b{color:var(--ink)}
+  .rules{font-size:var(--fz-sm);color:#6b5226;line-height:1.5} .rules b{color:var(--ink)}
   #minibar{display:none;order:-1;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
     width:min(97vw,560px);background:var(--panel);border:2px solid var(--ink);border-radius:10px;padding:6px 10px;box-shadow:3px 3px 0 rgba(0,0,0,.3)}
-  #minibar .turnbadge{font-size:13px;padding:3px 10px;border-width:2px}
-  #miniHint{flex-basis:100%;text-align:center;font-size:11px;color:#6b5226;order:5;min-height:14px}
-  .minibtn{background:#ead4a6;border:2px solid var(--ink);border-radius:8px;padding:5px 10px;font-weight:700;font-size:12px;cursor:pointer;font-family:var(--hand);color:var(--ink)}
+  #minibar .turnbadge{font-size:var(--fz-sm);padding:3px 10px;border-width:2px}
+  #miniHint{flex-basis:100%;text-align:center;font-size:var(--fz-xs);color:#6b5226;order:5;min-height:14px}
+  .minibtn{background:#ead4a6;border:2px solid var(--ink);border-radius:8px;padding:6px 11px;font-weight:700;font-size:var(--fz-sm);cursor:pointer;font-family:var(--hand);color:var(--ink)}
   .minibtn:hover{background:var(--accent)}
   #miniBody .pile.exile{display:inline-flex;vertical-align:top;margin:0 8px}
-  #miniBody .rules{font-size:13px}
-  #miniBody #logbox div{padding:2px 0;border-bottom:1px solid #d8c08c;color:#4a3a22;font-size:13px}
+  #miniBody .rules{font-size:var(--fz-sm)}
+  #miniBody #logbox div{padding:2px 0;border-bottom:1px solid #d8c08c;color:#4a3a22;font-size:var(--fz-sm)}
   .sidehead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
   details.infobox{border:2px solid var(--ink);border-radius:10px;background:#efdcb0;overflow:hidden}
-  details.infobox>summary{cursor:pointer;list-style:none;padding:8px 12px;font-weight:700;font-size:13px;color:var(--ink);background:#e3cc98;user-select:none}
+  details.infobox>summary{cursor:pointer;list-style:none;padding:8px 12px;font-weight:700;font-size:var(--fz-sm);color:var(--ink);background:#e3cc98;user-select:none}
   details.infobox>summary::-webkit-details-marker{display:none}
   details.infobox>summary::before{content:"▸ ";color:var(--accent2)}
   details.infobox[open]>summary::before{content:"▾ "}
@@ -299,13 +344,13 @@
 
   .overlay{position:fixed;inset:0;background:rgba(28,16,6,.8);display:none;align-items:center;justify-content:center;z-index:70}
   .overlay.show{display:flex}
-  .modal{background:var(--panel);padding:34px 44px;border-radius:18px;text-align:center;color:var(--text);border:3px solid var(--ink);box-shadow:6px 7px 0 rgba(0,0,0,.4)}
-  .modal h2{margin:0 0 8px;font-size:30px;color:var(--ink)}
-  .modal button{margin-top:14px;background:var(--accent);color:#2a1500;border:3px solid var(--ink);border-radius:12px;padding:12px 26px;font-size:16px;font-weight:700;cursor:pointer;font-family:var(--hand);box-shadow:3px 4px 0 rgba(0,0,0,.3)}
+  .modal{background:var(--panel);padding:clamp(18px,4vw,34px) clamp(20px,5vw,44px);border-radius:18px;text-align:center;color:var(--text);border:3px solid var(--ink);box-shadow:6px 7px 0 rgba(0,0,0,.4);max-width:96vw}
+  .modal h2{margin:0 0 8px;font-size:var(--fz-h2);color:var(--ink)}
+  .modal button{margin-top:14px;background:var(--accent);color:#2a1500;border:3px solid var(--ink);border-radius:12px;padding:clamp(10px,2vw,12px) clamp(18px,4vw,26px);font-size:var(--fz-btn);font-weight:700;cursor:pointer;font-family:var(--hand);box-shadow:3px 4px 0 rgba(0,0,0,.3)}
   .modal button:hover{background:#f4a755}
   /* ---- Deckbuilder ---- */
-  .bsec{font-weight:700;margin:14px 0 6px;color:var(--ink);font-size:13px}
-  .bhint{font-size:11.5px;color:var(--muted);margin-top:5px}
+  .bsec{font-weight:700;margin:14px 0 6px;color:var(--ink);font-size:var(--fz-sm)}
+  .bhint{font-size:var(--fz-sm);color:var(--muted);margin-top:5px}
   .bgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;max-width:420px}
   .bslot{aspect-ratio:1;border:2px solid var(--ink);border-radius:6px;display:flex;align-items:center;justify-content:center;position:relative;background:#e7d2a4;min-height:40px}
   .bslot img{max-height:78%;max-width:88%;object-fit:contain}
@@ -327,7 +372,7 @@
   .bwrap{display:flex;gap:18px;align-items:stretch;justify-content:center;height:100%;flex-wrap:nowrap}
   .bdeck{flex:0 1 auto;--dc:clamp(78px,12vh,150px);overflow-y:auto;overflow-x:hidden;min-height:0;padding-right:4px}
   .bpal{flex:0 0 auto;--card-w:clamp(74px,9vh,112px);overflow-y:auto;min-height:0;padding-right:2px}
-  .bdlabel{font-weight:800;font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin:7px 0 3px;display:flex;align-items:center;gap:6px}
+  .bdlabel{font-weight:800;font-size:var(--fz-sm);letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin:9px 0 4px;display:flex;align-items:center;gap:6px}
   .bdlabel b{color:var(--ink)}
   .bdlabel .warn{color:#b33}
   .bcol{display:grid;grid-template-columns:repeat(8,var(--dc));gap:5px}
@@ -335,7 +380,7 @@
   .bcell.figslot{border-style:solid;border-color:#a9843f;background:#f4e7c9}
   .bcell.figslot.king{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent);background:#f6e0b0}
   .bcell.figslot.block{opacity:.4}
-  .bcell .phcat{font-family:var(--pixel);font-size:8px;color:#9c7c45}
+  .bcell .phcat{font-family:var(--pixel);font-size:var(--fz-xs);color:#9c7c45}
   /* Mini-Karte (Deck + Palette) */
   .mc{width:100%;height:100%;border-radius:5px;overflow:hidden;position:relative;display:flex;flex-direction:column;border:2px solid var(--ink);cursor:pointer;background:#9c7c45;box-shadow:1px 1px 0 rgba(0,0,0,.25)}
   .mc .mart{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
@@ -346,28 +391,30 @@
   .mc .mart img.p1{filter:brightness(1.9) contrast(1.05) drop-shadow(0 2px 2px rgba(0,0,0,.5))}
   .mc .mart img.p2{filter:brightness(.5) contrast(1.2) drop-shadow(0 2px 2px rgba(0,0,0,.45))}
   .mc .mart .mglyph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.9em;color:#eaf6ff;text-shadow:0 1px 2px #0009;opacity:.55;pointer-events:none;letter-spacing:2px}
-  .mc .mnm{font-size:10.5px;line-height:1.05;text-align:center;padding:3px 2px;background:#f3e3c0;color:#3a2b12;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .mc .mbadge{position:absolute;top:2px;left:2px;font-size:10px;font-weight:800;color:#fff;border:1.5px solid var(--ink);border-radius:6px;padding:0 4px;line-height:1.5}
+  .mc .mnm{font-size:var(--fz-xs);line-height:1.05;text-align:center;padding:4px 2px;background:#f3e3c0;color:#3a2b12;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mc .mbadge{position:absolute;top:2px;left:2px;font-size:12px;font-weight:800;color:#fff;border:1.5px solid var(--ink);border-radius:6px;padding:0 4px;line-height:1.5}
   .mc .mbadge.cost{background:#2b6cb0}
   .mc .mbadge.once{background:#c2722a}
-  .mc .mcount{position:absolute;top:2px;right:2px;font-size:10px;font-weight:800;background:var(--ink);color:#f3d6a0;border-radius:6px;padding:0 4px;line-height:1.5}
+  .mc .mcount{position:absolute;top:2px;right:2px;font-size:12px;font-weight:800;background:var(--ink);color:#f3d6a0;border-radius:6px;padding:0 4px;line-height:1.5}
   .mc .mrm{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;background:rgba(180,30,30,.0);color:#fff;font-weight:900;font-size:1.2em;opacity:0;transition:opacity .1s}
   .bcell:hover .mc .mrm{opacity:1;background:rgba(150,20,20,.55)}
   /* Palette – echte Spielkarten, klein */
   .btabs{display:flex;gap:4px;margin-bottom:8px}
-  .btab{flex:1;padding:6px 3px;border:2px solid var(--ink);border-radius:8px;background:#e3cc98;font-weight:800;font-size:11px;cursor:pointer;text-align:center;box-shadow:2px 2px 0 rgba(0,0,0,.2)}
+  .btab{flex:1;padding:8px 4px;border:2px solid var(--ink);border-radius:8px;background:#e3cc98;font-weight:800;font-size:var(--fz-sm);cursor:pointer;text-align:center;box-shadow:2px 2px 0 rgba(0,0,0,.2)}
   .btab.on{background:var(--accent);color:#fff}
   .bpalgrid{display:grid;grid-template-columns:repeat(4,var(--card-w));gap:11px 8px;justify-content:center}
-  .bpalgrid .pcatlbl{grid-column:1/-1;font-weight:800;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:3px 0 -3px}
+  .bpalgrid .pcatlbl{grid-column:1/-1;font-weight:800;font-size:var(--fz-sm);text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:4px 0 -2px}
   .palcard{position:relative;cursor:pointer;transition:transform .08s;justify-self:center}
   .palcard .handcard{cursor:pointer}
   .palcard:hover{transform:translateY(-3px)}
   .palcard:hover .handcard{outline:2px solid var(--accent);border-radius:6px}
   .palcard.disabled{opacity:.35;pointer-events:none;filter:grayscale(.6)}
-  .palcount{position:absolute;top:-6px;right:-6px;font-size:11px;font-weight:800;background:var(--ink);color:#f3d6a0;border:2px solid #f3d6a0;border-radius:10px;padding:0 5px;z-index:3;box-shadow:1px 1px 0 rgba(0,0,0,.3)}
+  .palcount{position:absolute;top:-6px;right:-6px;font-size:13px;font-weight:800;background:var(--ink);color:#f3d6a0;border:2px solid #f3d6a0;border-radius:10px;padding:0 6px;z-index:3;box-shadow:1px 1px 0 rgba(0,0,0,.3)}
 
   /* ---- Schmaler: Bedienelemente über/unter die Karten stapeln ---- */
-  @media (max-width:1000px){
+  /* ================= HANDY-UI: nur bei deutlich hochkantem Bildschirm ================= */
+  /*  (quer oder ~quadratisch -> normales Desktop-UI). Schwelle passt zu builderIsPortrait() im JS. */
+  @media (max-aspect-ratio: 4/5){
     :root{
       --card-w:max(40px, min(104px, calc((100vw - 26px)/7)));  /* 7 Karten passen in die Fensterbreite */
       --pile-w:clamp(34px,7vw,52px);
@@ -379,15 +426,29 @@
     .handbar.top .hand{order:1}                                         /* oben: Karten am Rand ... */
     .handbar.top .ctrlgroup{order:3}                                    /* ... Steuerung darunter */
     .botleft{gap:3px;min-width:0}
-    .endbtn{max-width:calc(var(--card-w)*2.2);font-size:11px;padding:6px 8px;line-height:1.1}
-  }
-  /* ---- Kleiner Spielbereich: Seitenpanel zu Minibar einklappen, Exil in Overlay ---- */
-  @media (max-width:1000px){
+    .endbtn{max-width:calc(var(--card-w)*2.2);font-size:var(--fz-xs);padding:6px 8px;line-height:1.1}
+    /* Seitenpanel zu Minibar einklappen, Exil in Overlay */
     .side{display:none}
     .exilecol{display:none}
-    #minibar{display:flex}
+    #minibar{display:flex;position:sticky;top:0;z-index:25}   /* Panel liegt immer über dem Brett */
     .stage{grid-template-columns:1fr;justify-items:center;align-content:start;gap:8px;overflow:auto;padding:6px}
     .boardwrap{justify-self:center}
+    /* Deckbuilder Handy: Vollbild, immer nur EIN Deck (Figuren/Normal/Extra) – JS baut .bwrap.mob */
+    #builderMenu .modal{width:100vw;height:100dvh;border-radius:0;padding:10px 12px}
+    #bMain{overflow:auto !important}
+    .bwrap.mob{display:flex;flex-direction:column;gap:10px;height:auto}
+    .bwrap.mob .btabs{position:sticky;top:0;z-index:4;background:var(--panel);margin:0;padding:2px 0 6px}
+    .bwrap.mob .btab{padding:11px 4px;font-size:var(--fz-md)}
+    .bcolmob{grid-template-columns:repeat(8,minmax(0,1fr))}   /* alle 8 Slots passen immer in die Breite */
+    .bpalhead{font-weight:800;font-size:var(--fz-sm);color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:2px 0 -2px}
+    .bwrap.mob .bpalgrid{--card-w:clamp(64px,27vw,110px);grid-template-columns:repeat(auto-fill,var(--card-w));justify-content:center}
+    /* Kampagnen-/Deck-Menü Vollbild */
+    #campMenu .modal,#deckMenu .modal{max-width:100vw;width:100vw;min-height:100dvh;max-height:100dvh;border-radius:0}
+    .runcard{width:calc(50vw - 22px)}
+  }
+  /* Schmales Handy: Deck-Slots von 8 auf 4 Spalten (nur diese beiden Werte erlaubt) */
+  @media (max-aspect-ratio: 4/5) and (max-width:480px){
+    .bcolmob{grid-template-columns:repeat(4,minmax(0,1fr))}
   }
 </style>
 </head>
@@ -471,44 +532,44 @@
 </div>
 
 <div class="overlay" id="discOverlay"><div class="modal" style="text-align:left">
-  <h2 id="discTitle" style="font-size:22px">Ablagestapel</h2>
+  <h2 id="discTitle" style="font-size:var(--fz-h3)">Ablagestapel</h2>
   <div id="discList" class="disclist"></div>
   <button id="discClose">Schließen</button>
 </div></div>
 
 <div class="overlay" id="miniOverlay"><div class="modal" style="text-align:left;max-width:92vw;max-height:86vh;overflow:auto">
-  <h2 id="miniTitle" style="font-size:20px">Info</h2>
+  <h2 id="miniTitle" style="font-size:var(--fz-h3)">Info</h2>
   <div id="miniBody"></div>
   <button id="miniClose">Schließen</button>
 </div></div>
 
 <div class="overlay" id="promoOverlay"><div class="modal" style="max-width:92vw">
-  <h2 style="font-size:20px">Frigate umwandeln</h2>
-  <div style="font-size:13px;color:#6b5226;margin-bottom:8px">Wähle eine deiner geschlagenen Figuren:</div>
+  <h2 style="font-size:var(--fz-h3)">Frigate umwandeln</h2>
+  <div style="font-size:var(--fz-sm);color:#6b5226;margin-bottom:8px">Wähle eine deiner geschlagenen Figuren:</div>
   <div id="promoBody"></div>
   <button id="promoCancel">Abbrechen</button>
 </div></div>
 
 <div class="overlay show" id="startMenu"><div class="modal">
-  <h2 style="font-size:30px">♞ Kartenschach</h2>
-  <p style="color:var(--muted);margin:2px 0 0">Spielmodus wählen</p>
+  <h2 style="font-size:var(--fz-h1)">♞ Kartenschach</h2>
+  <p style="color:var(--muted);margin:2px 0 0;font-size:var(--fz-md)">Spielmodus wählen</p>
   <div style="display:flex;flex-direction:column;gap:12px;margin-top:18px">
     <button id="btnCampaign" class="primary">🗺️&nbsp; Kampagne (Roguelite)</button>
     <button id="btnLocal">👥&nbsp; Lokal · 2 Spieler</button>
     <button id="btnCpu">🤖&nbsp; Gegen Computer</button>
     <button id="btnTest">🧪&nbsp; Testmodus (Sandbox)</button>
   </div>
-  <p style="color:var(--muted);font-size:12px;margin:20px 0 0">
+  <p style="color:var(--muted);font-size:var(--fz-xs);margin:20px 0 0">
     Figuren-Sprites von <a href="https://ddant1100.itch.io" target="_blank" rel="noopener" style="color:#1f6f8b;font-weight:700">Ddant1100</a><br>
     <a href="https://ddant1100.itch.io" target="_blank" rel="noopener" style="color:#1f6f8b">https://ddant1100.itch.io</a>
   </p>
 </div></div>
 
-<div class="overlay" id="campMenu"><div class="modal" style="max-width:min(94vw,760px);text-align:left"><div id="campBody"></div></div></div>
+<div class="overlay" id="campMenu"><div class="modal" style="max-width:min(94vw,760px);max-height:92vh;overflow:auto;text-align:left"><div id="campBody"></div></div></div>
 
 <div class="overlay" id="deckMenu"><div class="modal" style="max-width:94vw">
-  <h2 style="font-size:24px">Decks wählen</h2>
-  <p style="color:var(--muted);margin:2px 0 12px">Jede Seite wählt ein Deck.</p>
+  <h2 style="font-size:var(--fz-h2)">Decks wählen</h2>
+  <p style="color:var(--muted);margin:2px 0 12px;font-size:var(--fz-md)">Jede Seite wählt ein Deck.</p>
   <div id="deckPick" style="display:flex;gap:18px;justify-content:center;flex-wrap:wrap;text-align:left"></div>
   <div style="display:flex;gap:10px;justify-content:center;margin-top:14px">
     <button id="deckBack">Zurück</button>
@@ -517,8 +578,8 @@
 </div></div>
 
 <div class="overlay" id="builderMenu"><div class="modal" style="width:96vw;height:94vh;padding:14px 18px;overflow:hidden;text-align:left;display:flex;flex-direction:column">
-  <h2 id="bTitle" style="font-size:22px;margin-bottom:2px;flex:0 0 auto">Deckbuilder</h2>
-  <div id="bStatus" style="font-size:13px;margin-bottom:8px;flex:0 0 auto"></div>
+  <h2 id="bTitle" style="font-size:var(--fz-h2);margin-bottom:2px;flex:0 0 auto">Deckbuilder</h2>
+  <div id="bStatus" style="font-size:var(--fz-sm);margin-bottom:8px;flex:0 0 auto"></div>
   <div id="bMain" style="flex:1 1 auto;overflow:hidden;min-height:0"></div>
   <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px;flex:0 0 auto;padding-top:8px">
     <button id="bReset">Zurücksetzen</button>
@@ -635,7 +696,7 @@ function cfgFigCount(c){let n=0;for(const t of c.figs)if(t)n++;return n;}
 function cfgMoveCount(c){let n=0;for(const k in c.moves)n+=c.moves[k];return n;}
 function cfgDeckSize(c){return cfgFigCount(c)+cfgMoveCount(c);}
 function cfgExtraCount(c){let n=0;for(const k in (c.extra||{}))n+=c.extra[k];return n;}
-function cfgValid(c){return c.figs[KING_SLOT]&&cfgDeckSize(c)>=DECK_MIN&&cfgDeckSize(c)<=DECK_MAX&&cfgExtraCount(c)<=EXTRA_MAX;}
+function cfgValid(c,min){return c.figs[KING_SLOT]&&cfgDeckSize(c)>=(min||DECK_MIN)&&cfgDeckSize(c)<=DECK_MAX&&cfgExtraCount(c)<=EXTRA_MAX;}
 function buildDeckFromConfig(c){const a=[];
   c.figs.forEach((t,i)=>{if(t&&i!==KING_SLOT)a.push('place'+t);}); // König startet auf dem Brett (keine Karte)
   for(const cat in c.moves)for(let i=0;i<c.moves[cat];i++)a.push('mv_'+cat);
@@ -1156,8 +1217,6 @@ function render(){
     if(pending&&pending.src&&pending.src[0]===r&&pending.src[1]===c)d.className+=' src';
     if(sacrifice&&sacrifice.picked.some(([pr,pc])=>pr===r&&pc===c))d.className+=' src';
     if(mode==='test'&&testSrc&&testSrc[0]===r&&testSrc[1]===c)d.className+=' src';
-    if(c===B0C||c===B1C){const n=document.createElement('span');n.className='coord '+(c===B0C?'cl':'cr');n.textContent=9-r;d.appendChild(n);}   // Rang-Zahl in Spalte a/h
-    if(r===B0R||r===B1R){const l=document.createElement('span');l.className='coord '+(r===B0R?'ct':'cb');l.textContent=fileLetter(c);d.appendChild(l);}   // Linien-Buchstabe in Reihe 1/8
     d.addEventListener('click',()=>onCell(r,c));
     d.addEventListener('mouseenter',()=>{if(pending&&pending.shape)showPreview(r,c);});
     d.addEventListener('dragover',e=>{if(targetSet.has(key)||(pending&&pending.shape)){e.preventDefault();if(pending&&pending.shape)showPreview(r,c);}});
@@ -1302,6 +1361,20 @@ function placePieces(){
   const layer=document.getElementById('pieceLayer');layer.innerHTML='';
   const Z=camera.zoom;                            // Bildschirm-px → lokale px (Brett ist um Z skaliert)
   const bw=document.getElementById('boardwrap').getBoundingClientRect();
+  // Koordinaten-Beschriftung: in der ungekippten Ebene rendern (sonst durch rotateX unscharf)
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const isNum=(c===B0C||c===B1C), isLet=(r===B0R||r===B1R);
+    if(!isNum&&!isLet)continue;
+    const el=cellEls[r+','+c];if(!el)continue;
+    const rect=el.getBoundingClientRect();
+    const rw=rect.width/Z, rh=rect.height/Z;
+    const cx=(rect.left+rect.width/2-bw.left)/Z, cy=(rect.top+rect.height/2-bw.top)/Z;
+    const fs=Math.max(9,rh*0.30);
+    if(isNum){const n=document.createElement('div');n.className='coordf';n.textContent=9-r;
+      n.style.left=(cx+(c===B0C?-rw*0.37:rw*0.37))+'px';n.style.top=cy+'px';n.style.fontSize=fs+'px';layer.appendChild(n);}
+    if(isLet){const l=document.createElement('div');l.className='coordf';l.textContent=fileLetter(c);
+      l.style.left=cx+'px';l.style.top=(cy+(r===B0R?-rh*0.36:rh*0.38))+'px';l.style.fontSize=fs+'px';layer.appendChild(l);}
+  }
   for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
     const p=grid[r][c].piece;if(!p)continue;
     const el=cellEls[r+','+c];if(!el)continue;
@@ -1666,103 +1739,253 @@ function aiEndTurn(){
 function startGame(m){mode=m;campFighting=false;document.getElementById('startMenu').classList.remove('show');document.getElementById('deckMenu').classList.remove('show');document.getElementById('overlay').classList.remove('show');newGame();}
 function openDeckMenu(m){pendingMode=m;deckSel={1:defaultDeckCfg('klassik'),2:defaultDeckCfg('klassik')};renderDeckMenu();document.getElementById('startMenu').classList.remove('show');document.getElementById('deckMenu').classList.add('show');}
 
-// ---------- Kampagne (Roguelite) ----------
-const CAMP_STAGES=8;
-const CAMP_NAMES=['Rekrut','Wache','Söldner','Ritter','Hauptmann','Belagerer','General','Warlord ⚔'];
-let campFighting=false, campaign=campLoadRun();
-function campLoadRun(){try{const s=localStorage.getItem('ks_run');return s?JSON.parse(s):null;}catch(e){return null;}}
-function campSaveRun(){try{if(campaign)localStorage.setItem('ks_run',JSON.stringify(campaign));else localStorage.removeItem('ks_run');}catch(e){}}
-function campMetaGet(){try{return JSON.parse(localStorage.getItem('ks_meta'))||{best:0,runs:0,wins:0};}catch(e){return {best:0,runs:0,wins:0};}}
-function campMetaSet(m){try{localStorage.setItem('ks_meta',JSON.stringify(m));}catch(e){}}
-function campWeakDeck(){const f=new Array(16).fill(null);f[4]=f[5]=f[6]=f[7]='P';f[8]='R';f[9]='N';f[12]='K';return {figs:f,moves:{pawn:6,knight:2,rook:2,bishop:0,queen:0,king:1},extra:{}};}
-function campEnemyCfg(lv){   // lv 1..8: skalierendes Gegnerdeck (startet bereits mit voller Armee)
-  const s=DECK_CLASSES[lv>=6?'belagerung':lv>=3?'orden':'klassik'].slots,f=new Array(16).fill(null);
-  const pw=Math.min(8,5+lv);for(let i=0;i<pw;i++)f[i]=s.P;      // Stufe 1: 6 Bauern, ab Stufe 3: 8
-  f[12]=s.K;
-  f[8]=s.R;f[15]=lv>=2?s.R:null;                                // 2. Turm ab Stufe 2
-  f[9]=s.N;f[14]=lv>=2?s.N:null;                                // Springer ab 1, 2. ab 2
-  f[10]=s.B;f[13]=lv>=3?s.B:null;                               // Läufer ab 1, 2. ab 3
-  f[11]=lv>=2?s.Q:null;                                          // Dame ab Stufe 2
-  if(lv>=5)f[11]='AM';                                          // Amazone ab Stufe 5
-  if(lv>=6)f[14]='GN';                                          // Gnu ab Stufe 6
-  if(lv>=7){f[8]='MA';f[15]='SG';}                              // Marschall + Siege ab Stufe 7
-  return {figs:f,moves:{pawn:8,knight:lv>=2?2:1,bishop:lv>=2?2:1,rook:2,queen:lv>=2?2:0,king:1},extra:{}};
-}
-function openCampaign(){campFighting=false;document.getElementById('startMenu').classList.remove('show');document.getElementById('campMenu').classList.add('show');campRender();}
-function campBackToMenu(){document.getElementById('campMenu').classList.remove('show');document.getElementById('startMenu').classList.add('show');}
-function campNewRun(){campaign={stage:1,deck:campWeakDeck()};campSaveRun();const m=campMetaGet();m.runs=(m.runs||0)+1;campMetaSet(m);campRender();}
-function campRender(){
-  const b=document.getElementById('campBody'),m=campMetaGet();
-  if(!campaign){
-    b.innerHTML='<h2>🗺️ Kampagne</h2><p>Starte mit einem schwachen Deck und besiege '+CAMP_STAGES+' immer stärkere Gegner. Nach jedem Sieg wählst du eine Belohnung, die dein Deck dauerhaft für den Run verbessert.</p>'
-      +'<div class="campstat"><span>🏆 Beste Stufe: <b>'+(m.best||0)+'</b></span><span>Läufe: <b>'+(m.runs||0)+'</b></span><span>Gewonnen: <b>'+(m.wins||0)+'</b></span></div>'
-      +'<div class="campbtns"><button class="primary" id="cNew">Neuen Run starten ▸</button><button id="cBack">Zurück</button></div>';
-    document.getElementById('cNew').onclick=campNewRun;document.getElementById('cBack').onclick=campBackToMenu;return;
+// ---------- Kampagne (Roguelite mit Sammlung + Boostern) ----------
+/* ============ KAMPAGNEN-KONFIG (hier balancen / neue Runs & Themen ableiten) ============
+   Jeder Run:
+     id      : eindeutiger Schlüssel (Freischalt-Kette & Speicherung)   emoji: Themen-Icon
+     name/desc: Anzeige
+     stages  : Gegner-Leiter [ {name, pieces:{Kürzel->Anzahl}, moves:{Kategorie->Anzahl}}, ... ]
+     booster : {name, pool:[ ['Kürzel','common'|'rare'|'epic'], ... ]}  Karten, die man gewinnen kann
+   SLOT-KAPAZITÄT je Seite: Bauer 8 · Springer 2 · Läufer 2 · Turm 2 · Dame 1 · König 1.
+   Viele Märchenfiguren sind Springer-Klasse (Kamel, Zebra, Gnu, Zentaur ...) -> teilen sich die 2 Springer-Slots!
+   Freischaltung: Run N schaffen -> Run N+1 frei. Alte Runs beliebig farmbar. Kürzelliste in Kampagne_Run.md.  */
+const CAMP_BASE_COLLECTION={figs:{K:1,R:1,N:1,B:1,P:5}, moves:{pawn:6,knight:2,bishop:2,rook:2,king:1}, extra:{}};   // bewusst schwach – wächst über Booster
+const CAMP_DECK_MIN=16;   // Kampagnen-Decks dürfen kleiner sein als im freien Spiel (DECK_MIN)
+const CAMPAIGNS=[
+  { id:'rekrut', name:'Rekruten-Drill', emoji:'🛡️',
+    desc:'Der klassische Einstieg – schlag dich durch die Wachstube und lerne dein Deck kennen.',
+    stages:[
+      {name:'Strohpuppe', pieces:{P:5,N:1,R:1,K:1},           moves:{pawn:7,knight:1,rook:1,king:1}},
+      {name:'Rekrut',     pieces:{P:6,N:1,B:1,R:1,K:1},       moves:{pawn:8,knight:1,bishop:1,rook:1,king:1}},
+      {name:'Wache',      pieces:{P:7,N:2,B:1,R:2,K:1},       moves:{pawn:8,knight:2,bishop:1,rook:2,king:1}},
+      {name:'Feldwebel',  pieces:{P:8,N:2,B:2,R:2,Q:1,K:1},   moves:{pawn:8,knight:2,bishop:2,rook:2,queen:2,king:1}}
+    ],
+    booster:{name:'Rekruten-Booster', pool:[['P','common'],['N','common'],['B','common'],['R','common'],['mv:pawn','common'],['mv:knight','rare'],['mv:bishop','rare'],['mv:rook','rare'],['Q','rare'],['DR','rare'],['MN','rare'],['SU','epic'],['mv:queen','epic']]}
+  },
+  { id:'pferde', name:'Gestüt der Springer', emoji:'🐴',
+    desc:'Alles springt: Kavallerie, Nachtreiter, Kamele – bis hinauf zum Zentauren-Fürsten.',
+    stages:[
+      {name:'Reiterknecht',    pieces:{P:6,N:1,HO:1,K:1},        moves:{pawn:8,knight:3,king:1}},
+      {name:'Kavallerist',     pieces:{P:6,HO:1,KA:1,K:1},       moves:{pawn:8,knight:4,king:1}},
+      {name:'Lanzenreiter',    pieces:{P:7,NR:1,GN:1,K:1},       moves:{pawn:8,knight:5,king:1}},
+      {name:'Zentauren-Fürst', pieces:{P:6,ZN:1,NR:1,AM:1,K:1},  moves:{pawn:8,knight:5,queen:2,king:1}}
+    ],
+    booster:{name:'Pferde-Booster', pool:[['HO','common'],['KA','common'],['ZE','common'],['GI','common'],['mv:knight','common'],['NR','rare'],['KR','rare'],['GN','rare'],['RO','epic'],['ZN','epic']]}
+  },
+  { id:'burg', name:'Belagerung', emoji:'🏰',
+    desc:'Türme, Trebuchets und schweres Gerät. Wer die Mauern knackt, erbeutet Belagerungskarten.',
+    stages:[
+      {name:'Torwache',    pieces:{P:6,R:1,DA:1,K:1},        moves:{pawn:8,rook:3,king:1}},
+      {name:'Wallmeister', pieces:{P:7,WE:1,PA:1,K:1},       moves:{pawn:8,rook:4,king:1}},
+      {name:'Rammbock',    pieces:{P:7,TR:1,SG:1,K:1},       moves:{pawn:8,rook:5,knight:1,king:1}},
+      {name:'Burgvogt',    pieces:{P:7,SG:1,MA:1,Q:1,DI:1},  moves:{pawn:8,rook:5,queen:2,king:1}}
+    ],
+    booster:{name:'Belagerungs-Booster', pool:[['WE','common'],['DA','common'],['R','common'],['mv:rook','common'],['PA','rare'],['KG','rare'],['TR','rare'],['SG','epic'],['MA','epic']]}
+  },
+  { id:'orient', name:'Sand & Elfenbein', emoji:'🐫',
+    desc:'Kamele, Elefanten und die Amazone – der exotischste und härteste Run der Kampagne.',
+    stages:[
+      {name:'Karawane',        pieces:{P:6,KA:1,EL:1,FE:1,K:1},      moves:{pawn:8,knight:3,bishop:1,king:1}},
+      {name:'Wüstensöldner',   pieces:{P:6,KA:1,EL:1,WE:1,K:1},      moves:{pawn:8,knight:3,rook:1,king:1}},
+      {name:'Elefantenführer', pieces:{P:6,EL:1,GN:1,AL:1,FE:1,K:1}, moves:{pawn:8,knight:3,bishop:2,king:1}},
+      {name:'Sultan',          pieces:{P:6,EL:1,KR:1,AL:1,AM:1,DI:1},moves:{pawn:8,knight:4,bishop:2,queen:2,king:1}}
+    ],
+    booster:{name:'Orient-Booster', pool:[['KA','common'],['EL','common'],['FE','common'],['WE','common'],['mv:knight','rare'],['mv:bishop','rare'],['AL','rare'],['KR','rare'],['GN','rare'],['AM','epic']]}
   }
-  let dots='';for(let i=1;i<=CAMP_STAGES;i++)dots+='<div class="stagedot '+(i<campaign.stage?'done':i===campaign.stage?'cur':'')+'">'+i+'</div>';
-  const d=campaign.deck,figN=d.figs.filter(Boolean).length,mvN=Object.values(d.moves).reduce((a,x)=>a+x,0);
-  b.innerHTML='<h2>🗺️ Kampagne – Stufe '+campaign.stage+'/'+CAMP_STAGES+'</h2><div class="stageladder">'+dots+'</div>'
-    +'<p>Nächster Gegner: <b>'+CAMP_NAMES[campaign.stage-1]+'</b></p>'
-    +'<div class="campstat"><span>Dein Deck: <b>'+figN+'</b> Figuren · <b>'+mvN+'</b> Zug-Karten</span></div>'
-    +'<div class="campbtns"><button class="primary" id="cFight">⚔ Kampf starten</button><button id="cGive">Run aufgeben</button></div>';
-  document.getElementById('cFight').onclick=campFight;
-  document.getElementById('cGive').onclick=()=>{if(confirm('Diesen Run wirklich aufgeben?')){campaign=null;campSaveRun();campRender();}};
+];
+/* ======================================================================================= */
+function campMovesFull(m){return Object.assign({pawn:0,knight:0,bishop:0,rook:0,queen:0,king:0},m);}
+function campBuildFigs(pieces){const f=new Array(16).fill(null);   // Figuren in die Kategorie-Slots einsortieren
+  for(const t in pieces){const cat=CAT_OF[t];if(!cat)continue;let n=pieces[t];
+    for(const i of FIG_SLOTS[cat]){if(n<=0)break;if(!f[i]){f[i]=t;n--;}}}
+  return f;}
+function campDeckFrom(spec){return {figs:campBuildFigs(spec.pieces),moves:campMovesFull(spec.moves),extra:{}};}
+function campEnemyCfg(stage){return campDeckFrom(stage);}
+const RAR_W={common:6,rare:3,epic:1}, RAR_NM={common:'Gewöhnlich',rare:'Selten',epic:'Episch'};
+// --- Persistenz: Sammlung (ks_col), Meta/Freischaltung (ks_meta), Run-Decks (ks_decks), laufender Run (ks_run) ---
+function campColGet(){try{const s=localStorage.getItem('ks_col');if(s){const c=JSON.parse(s);c.figs=c.figs||{};c.moves=c.moves||{};c.extra=c.extra||{};return c;}}catch(e){}return cfgClone(CAMP_BASE_COLLECTION);}
+function campColSet(){try{localStorage.setItem('ks_col',JSON.stringify(campCol));}catch(e){}}
+function campMetaGet(){try{return Object.assign({unlocked:1,cleared:{},runs:0,wins:0},JSON.parse(localStorage.getItem('ks_meta'))||{});}catch(e){return {unlocked:1,cleared:{},runs:0,wins:0};}}
+function campMetaSet(m){try{localStorage.setItem('ks_meta',JSON.stringify(m));}catch(e){}}
+function campTrimDeck(cfg){   // gespeichertes Deck an die aktuelle Sammlung angleichen (nichts Unbesessenes behalten)
+  const c=cfgClone(cfg);const used={};
+  for(let i=0;i<16;i++){const t=c.figs[i];if(!t)continue;used[t]=(used[t]||0)+1;
+    if(used[t]>((campCol.figs&&campCol.figs[t])||0))c.figs[i]=null;}
+  if(!c.figs[KING_SLOT])c.figs[KING_SLOT]=campDefaultKing();
+  c.moves=c.moves||{};for(const k in c.moves)c.moves[k]=Math.min(c.moves[k]||0,(campCol.moves&&campCol.moves[k])||0);
+  c.extra=c.extra||{};for(const k in c.extra){c.extra[k]=Math.min(c.extra[k],(campCol.extra&&campCol.extra[k])||0);if(!c.extra[k])delete c.extra[k];}
+  return c;
+}
+function campDecksGet(){try{const d=JSON.parse(localStorage.getItem('ks_decks'))||{};for(const k in d)d[k]=campTrimDeck(d[k]);return d;}catch(e){return {};}}
+function campDecksSet(){try{localStorage.setItem('ks_decks',JSON.stringify(campDeckByRun));}catch(e){}}
+function campRunSave(){try{if(campRunState)localStorage.setItem('ks_run',JSON.stringify(campRunState));else localStorage.removeItem('ks_run');}catch(e){}}
+function campRunLoad(){try{const s=localStorage.getItem('ks_run');if(!s)return null;const r=JSON.parse(s);
+  if(!r||typeof r.runIdx!=='number'||r.runIdx<0||r.runIdx>=CAMPAIGNS.length||typeof r.stage!=='number'||!r.deck){localStorage.removeItem('ks_run');return null;}
+  return r;}catch(e){localStorage.removeItem('ks_run');return null;}}
+let campFighting=false, campCol=campColGet(), campDeckByRun=campDecksGet(), campRunState=campRunLoad();
+function campColSize(){let n=0;for(const t in campCol.figs)n+=campCol.figs[t];for(const k in campCol.moves)n+=campCol.moves[k];return n;}
+function campDefaultKing(){return CAT_VARIANTS.king.find(t=>campCol.figs[t])||'K';}
+function campEmptyCfg(){const f=new Array(16).fill(null);f[KING_SLOT]=campDefaultKing();return {figs:f,moves:{},extra:{}};}
+// --- Menü-Navigation ---
+function campShow(){document.getElementById('startMenu').classList.remove('show');document.getElementById('campMenu').classList.add('show');}
+function openCampaign(){campFighting=false;campShow();if(campRunState)campResumeView();else campHome();}
+function campBackToMenu(){document.getElementById('campMenu').classList.remove('show');document.getElementById('startMenu').classList.add('show');}
+function campHome(){
+  const b=document.getElementById('campBody'),m=campMetaGet();
+  let grid='<div class="runrow">';
+  CAMPAIGNS.forEach((run,i)=>{
+    const locked=i>=m.unlocked, cl=m.cleared[run.id]||0;
+    grid+='<div class="runcard'+(locked?' locked':'')+'"'+(locked?'':' data-run="'+i+'"')+'>'
+      +'<div class="runemoji">'+(locked?'🔒':run.emoji)+'</div>'
+      +'<div class="runname">'+run.name+'</div>'
+      +'<div class="runmeta">'+run.stages.length+' Stufen'+(cl?' · <b>✓×'+cl+'</b>':'')+'</div>'
+      +(locked?'<div class="runlock">Vorherigen Run schaffen</div>':'')
+      +'</div>';
+  });
+  grid+='</div>';
+  b.innerHTML='<h2>🗺️ Kampagne</h2>'
+    +'<p>Sammle Karten, baue vor jedem Run dein Deck und schlag dich durch thematische Gegner. Jeder <b>geschaffte Run</b> gibt ein <b>Booster-Pack</b> mit neuen Karten für deine Sammlung. Alte Runs kannst du beliebig oft farmen.</p>'
+    +'<div class="campstat"><span>🗂️ Sammlung: <b>'+campColSize()+'</b> Karten</span><span>Runs geschafft: <b>'+(m.wins||0)+'</b></span><span>Läufe: <b>'+(m.runs||0)+'</b></span></div>'
+    +grid
+    +'<div class="campbtns"><button id="cCol">🗂️ Sammlung ansehen</button><button id="cBack">Zurück</button></div>'
+    +'<div style="text-align:center;margin-top:10px"><a href="#" id="cReset" style="font-size:var(--fz-xs);color:var(--muted)">Fortschritt zurücksetzen</a></div>';
+  document.querySelectorAll('#campBody [data-run]').forEach(el=>el.onclick=()=>campRunView(+el.dataset.run));
+  document.getElementById('cCol').onclick=campCollectionView;
+  document.getElementById('cBack').onclick=campBackToMenu;
+  document.getElementById('cReset').onclick=(e)=>{e.preventDefault();if(confirm('Sammlung, Runs und Fortschritt komplett zurücksetzen?')){['ks_col','ks_meta','ks_decks','ks_run'].forEach(k=>localStorage.removeItem(k));campCol=campColGet();campDeckByRun={};campRunState=null;campHome();}};
+}
+function campRunView(i){
+  const run=CAMPAIGNS[i],m=campMetaGet(),cl=m.cleared[run.id]||0;
+  let dots='';for(let s=0;s<run.stages.length;s++)dots+='<div class="stagedot">'+(s+1)+'</div>';
+  const dk=campDeckByRun[i],hasDeck=dk&&cfgValid(dk,CAMP_DECK_MIN);
+  const deckLine=hasDeck?('Dein Deck: <b>'+cfgDeckSize(dk)+'</b> Karten ✓'):'<span style="color:#b33">Noch kein gültiges Deck gebaut</span>';
+  let ladder='<div class="stageladder">'+dots+'</div><ol class="stagelist">';
+  run.stages.forEach(s=>ladder+='<li>'+s.name+'</li>');
+  ladder+='</ol>';
+  document.getElementById('campBody').innerHTML='<h2>'+run.emoji+' '+run.name+'</h2><p>'+run.desc+'</p>'
+    +ladder
+    +'<div class="campstat"><span>🎁 Belohnung: <b>'+run.booster.name+'</b></span>'+(cl?'<span>Bereits geschafft: <b>✓×'+cl+'</b></span>':'')+'</div>'
+    +'<div class="campstat"><span>'+deckLine+'</span></div>'
+    +'<div class="campbtns"><button id="cBuild">🃏 Deck bauen</button><button class="primary" id="cStart"'+(hasDeck?'':' disabled')+'>⚔ Run starten</button><button id="cBack">Zurück</button></div>';
+  document.getElementById('cBuild').onclick=()=>openCampBuilder(i);
+  const cs=document.getElementById('cStart');cs.style.opacity=hasDeck?'1':'.5';cs.onclick=()=>{if(hasDeck)campStartRun(i);};
+  document.getElementById('cBack').onclick=campHome;
+}
+function campCollectionView(){
+  let list='';
+  for(const cat of CATS){const items=CAT_VARIANTS[cat].filter(t=>campCol.figs[t]);
+    if(!items.length)continue;
+    list+='<div class="pcatlbl">'+CAT_NAME[cat]+'</div><div class="colrow">';
+    items.forEach(t=>list+='<div class="colcard"><img src="'+pieceSrc(PIECE_IMG[t])+'"><span class="cnm">'+pieceNm(t)+'</span><span class="cct">×'+campCol.figs[t]+'</span></div>');
+    list+='</div>';
+  }
+  const mv=CATS.filter(cat=>campCol.moves[cat]);
+  if(mv.length){
+    list+='<div class="pcatlbl">Zug-Karten</div><div class="colrow">';
+    mv.forEach(cat=>list+='<div class="colcard"><img src="'+pieceSrc(PIECE_IMG[CAT_BASE[cat]])+'"><span class="cnm">'+CAT_NAME[cat]+' ziehen</span><span class="cct">×'+campCol.moves[cat]+'</span></div>');
+    list+='</div>';
+  }
+  document.getElementById('campBody').innerHTML='<h2>🗂️ Sammlung</h2><p>Alle Karten, die du besitzt. Mit ihnen baust du im Kampagnen-Deckbuilder dein Run-Deck.</p>'+list
+    +'<div class="campbtns"><button id="cBack">Zurück</button></div>';
+  document.getElementById('cBack').onclick=campHome;
+}
+function campStartRun(i){
+  campRunState={runIdx:i,stage:0,deck:cfgClone(campDeckByRun[i])};campRunSave();
+  const m=campMetaGet();m.runs=(m.runs||0)+1;campMetaSet(m);
+  campFight();
 }
 function campFight(){
-  deckSel={1:cfgClone(campaign.deck),2:campEnemyCfg(campaign.stage)};
+  const rs=campRunState,run=CAMPAIGNS[rs.runIdx],stage=run.stages[rs.stage];
+  deckSel={1:cfgClone(rs.deck),2:campEnemyCfg(stage)};
   mode='cpu';campFighting=true;
   document.getElementById('campMenu').classList.remove('show');document.getElementById('startMenu').classList.remove('show');
   newGame();
 }
+function campResumeView(){
+  const rs=campRunState,run=CAMPAIGNS[rs.runIdx];
+  document.getElementById('campBody').innerHTML='<h2>'+run.emoji+' '+run.name+'</h2>'
+    +'<p>Laufender Run – nächste Stufe: <b>'+(rs.stage+1)+'/'+run.stages.length+'</b> ('+run.stages[rs.stage].name+')</p>'
+    +'<div class="campbtns"><button class="primary" id="cGo">⚔ Weiterkämpfen</button><button id="cQuit">Run aufgeben</button></div>';
+  document.getElementById('cGo').onclick=campFight;
+  document.getElementById('cQuit').onclick=()=>{if(confirm('Diesen Run aufgeben?')){campRunState=null;campRunSave();campHome();}};
+}
 function campResolve(won){
-  const m=campMetaGet();
+  const rs=campRunState;if(!rs){campShow();campHome();return;}
+  const run=CAMPAIGNS[rs.runIdx];
+  document.getElementById('campMenu').classList.add('show');
   if(won){
-    m.best=Math.max(m.best||0,campaign.stage);campMetaSet(m);
-    if(campaign.stage>=CAMP_STAGES){m.wins=(m.wins||0)+1;campMetaSet(m);campEnd('🏆 Kampagne gewonnen!','Du hast alle '+CAMP_STAGES+' Gegner besiegt! Respekt.');}
-    else campDraft();
+    rs.stage++;
+    if(rs.stage>=run.stages.length){
+      const m=campMetaGet();
+      m.cleared[run.id]=(m.cleared[run.id]||0)+1;m.wins=(m.wins||0)+1;
+      m.unlocked=Math.min(CAMPAIGNS.length,Math.max(m.unlocked,rs.runIdx+2));
+      campMetaSet(m);
+      campRunState=null;campRunSave();
+      campOpenBooster(run);
+    }else{
+      campRunSave();
+      document.getElementById('campBody').innerHTML='<h2>✔ Stufe geschafft!</h2>'
+        +'<p><b>'+run.name+'</b> – nächster Gegner: <b>'+(rs.stage+1)+'/'+run.stages.length+'</b> ('+run.stages[rs.stage].name+')</p>'
+        +'<div class="campbtns"><button class="primary" id="cGo">⚔ Weiter</button><button id="cQuit">Run abbrechen</button></div>';
+      document.getElementById('cGo').onclick=campFight;
+      document.getElementById('cQuit').onclick=()=>{campRunState=null;campRunSave();campHome();};
+    }
   }else{
-    m.best=Math.max(m.best||0,campaign.stage-1);campMetaSet(m);
-    campEnd('☠ Niederlage','Dein Run endet auf Stufe '+campaign.stage+'. Dein Meta-Fortschritt bleibt erhalten.');
+    const idx=rs.runIdx,st=rs.stage;campRunState=null;campRunSave();
+    document.getElementById('campBody').innerHTML='<h2>☠ Niederlage</h2>'
+      +'<p>Dein Run <b>'+run.name+'</b> endet auf Stufe '+(st+1)+'. Deine Sammlung bleibt – bau dein Deck um oder farme einen früheren Run.</p>'
+      +'<div class="campbtns"><button class="primary" id="cRetry">🃏 Deck & erneut</button><button id="cMenu">Kampagne</button></div>';
+    document.getElementById('cRetry').onclick=()=>campRunView(idx);
+    document.getElementById('cMenu').onclick=campHome;
   }
 }
-function campEnd(title,msg){
-  campaign=null;campSaveRun();
-  document.getElementById('campBody').innerHTML='<h2>'+title+'</h2><p>'+msg+'</p><div class="campbtns"><button class="primary" id="cAgain">Neuer Run</button><button id="cMenu">Hauptmenü</button></div>';
-  document.getElementById('campMenu').classList.add('show');
-  document.getElementById('cAgain').onclick=campNewRun;document.getElementById('cMenu').onclick=campBackToMenu;
-}
-function campEmptySlot(cfg,cat){return FIG_SLOTS[cat].find(i=>!cfg.figs[i]);}
-function campFigR(t,cat){return {title:pieceNm(t),desc:'Neue '+CAT_NAME[cat]+'-Figur',icon:'<img src="'+pieceSrc(PIECE_IMG[t])+'">',apply:c=>{const s=campEmptySlot(c,cat);if(s!==undefined)c.figs[s]=t;}};}
-function campMoveR(cat){return {title:'+2 '+CAT_NAME[cat]+' ziehen',desc:'Zwei zusätzliche Zug-Karten',icon:'<img src="'+pieceSrc(PIECE_IMG[CAT_BASE[cat]])+'">',apply:c=>{c.moves[cat]=(c.moves[cat]||0)+2;}};}
-function campExtraR(key){const d=CARD_DEFS[key];return {title:d.nm,desc:'Feld-Karte fürs Extra-Deck',icon:d.ic,apply:c=>{c.extra=c.extra||{};c.extra[key]=(c.extra[key]||0)+1;}};}
-const CAMP_FIGPOOL=[['P','pawn'],['DR','pawn'],['N','knight'],['HO','knight'],['EL','knight'],['KA','knight'],['GN','knight'],['B','bishop'],['ME','bishop'],['JA','bishop'],['R','rook'],['SG','rook'],['MA','rook'],['Q','queen'],['PR','queen'],['AM','queen']];
-function campGenRewards(){
-  const cands=[];
-  for(const[t,cat]of CAMP_FIGPOOL)if(campEmptySlot(campaign.deck,cat)!==undefined)cands.push(campFigR(t,cat));
-  for(const cat of CATS)if(cat!=='king')cands.push(campMoveR(cat));
-  for(const key of FIELD_CARDS)cands.push(campExtraR(key));
-  shuffle(cands);
-  const out=[],seen=new Set();
-  for(const r of cands){if(seen.has(r.title))continue;seen.add(r.title);out.push(r);if(out.length===3)break;}
+// --- Booster-Pack ---
+function campDrawBooster(run){
+  const bag=[];run.booster.pool.forEach(pr=>{const w=RAR_W[pr[1]]||1;for(let i=0;i<w;i++)bag.push(pr);});
+  const out=[];for(let i=0;i<3;i++)out.push(bag[Math.floor(Math.random()*bag.length)]);
   return out;
 }
-function campDraft(){
-  const rw=campGenRewards();
-  let h='<h2>🎉 Stufe '+campaign.stage+' geschafft!</h2><p>Wähle eine Belohnung für dein Deck:</p><div class="draftrow">';
-  rw.forEach((r,i)=>h+='<div class="draftcard" data-i="'+i+'"><div class="dcimg">'+r.icon+'</div><div class="dctitle">'+r.title+'</div><div class="dcdesc">'+r.desc+'</div></div>');
-  h+='</div>';
-  document.getElementById('campBody').innerHTML=h;document.getElementById('campMenu').classList.add('show');
-  document.querySelectorAll('#campBody [data-i]').forEach(el=>el.onclick=()=>{rw[+el.dataset.i].apply(campaign.deck);campaign.stage++;campSaveRun();campRender();});
+function boosterInfo(k){   // Pool-Eintrag -> Bild + Name ('mv:kat' = 2 Zug-Karten, sonst Figur)
+  if(k.slice(0,3)==='mv:'){const cat=k.slice(3);return {img:PIECE_IMG[CAT_BASE[cat]],nm:'+2 '+CAT_NAME[cat]+' ziehen'};}
+  return {img:PIECE_IMG[k],nm:pieceNm(k)};
+}
+function campOpenBooster(run){
+  const cards=campDrawBooster(run);
+  cards.forEach(pr=>{const k=pr[0];
+    if(k.slice(0,3)==='mv:'){const cat=k.slice(3);campCol.moves[cat]=(campCol.moves[cat]||0)+2;}
+    else campCol.figs[k]=(campCol.figs[k]||0)+1;});
+  campColSet();
+  document.getElementById('campBody').innerHTML='<h2>🏆 '+run.emoji+' '+run.name+' geschafft!</h2>'
+    +'<p>Du erhältst ein <b>'+run.booster.name+'</b>. Öffne es!</p>'
+    +'<div class="boosterwrap"><div class="pack shake" id="packEl"><div class="packinner">'+run.emoji+'<span>'+run.booster.name+'</span></div></div></div>'
+    +'<div class="campbtns"><button class="primary" id="bOpen">✨ Pack öffnen</button></div>';
+  const open=()=>campRevealBooster(run,cards);
+  document.getElementById('bOpen').onclick=open;
+  document.getElementById('packEl').onclick=open;
+}
+function campRevealBooster(run,cards){
+  let row='<div class="brow">';
+  cards.forEach((pr,i)=>{
+    const bi=boosterInfo(pr[0]);
+    row+='<div class="bcard '+pr[1]+'"><div class="bcflip" style="animation-delay:'+(i*0.4)+'s">'
+      +'<div class="bcback">'+run.emoji+'</div>'
+      +'<div class="bcface"><div class="bcimg"><img src="'+pieceSrc(bi.img)+'"></div><div class="bcname">'+bi.nm+'</div><div class="bcrar">'+(RAR_NM[pr[1]]||pr[1])+'</div></div>'
+      +'</div></div>';
+  });
+  row+='</div>';
+  document.getElementById('campBody').innerHTML='<h2>'+run.booster.name+'</h2><p>Neue Karten wandern in deine Sammlung:</p>'+row
+    +'<div class="campbtns"><button class="primary" id="bTake">In Sammlung übernehmen ▸</button></div>';
+  document.getElementById('bTake').onclick=campHome;
 }
 function renderDeckMenu(){
   const sides=[[1,pendingMode==='cpu'?'Du · Weiß ♔':'Weiß ♔'],[2,pendingMode==='cpu'?'Computer · Schwarz ♚':'Schwarz ♚']];
   let h='';
   for(const[pl,label]of sides){const cfg=deckSel[pl],ok=cfgValid(cfg);
-    h+='<div style="min-width:220px;flex:1"><div style="font-weight:700;margin-bottom:8px;font-family:var(--pixel);font-size:12px">'+label+'</div>';
+    h+='<div style="min-width:220px;flex:1"><div style="font-weight:700;margin-bottom:8px;font-family:var(--pixel);font-size:var(--fz-xs)">'+label+'</div>';
     for(const key in DECK_CLASSES){const c=DECK_CLASSES[key];
-      h+='<button class="act" data-pl="'+pl+'" data-key="'+key+'" style="display:block;width:100%;text-align:left;margin-bottom:6px"><b>'+c.name+'</b><br><span style="font-size:11px;color:var(--muted);font-weight:400">'+c.desc+'</span></button>';}
+      h+='<button class="act" data-pl="'+pl+'" data-key="'+key+'" style="display:block;width:100%;text-align:left;margin-bottom:6px"><b>'+c.name+'</b><br><span style="font-size:var(--fz-xs);color:var(--muted);font-weight:400">'+c.desc+'</span></button>';}
     h+='<button class="act primary" data-edit="'+pl+'" style="width:100%;margin-top:4px">✎ Anpassen (Deckbuilder)</button>';
-    h+='<div style="margin-top:6px;font-size:12px;color:'+(ok?'#2f7d32':'#b33')+'">Deck '+cfgDeckSize(cfg)+'/'+DECK_MAX+' · Extra '+cfgExtraCount(cfg)+' · '+(ok?'✓ gültig':'✗ '+(cfg.figs[KING_SLOT]?'min '+DECK_MIN+' Karten':'König fehlt'))+'</div>';
+    h+='<div style="margin-top:6px;font-size:var(--fz-xs);color:'+(ok?'#2f7d32':'#b33')+'">Deck '+cfgDeckSize(cfg)+'/'+DECK_MAX+' · Extra '+cfgExtraCount(cfg)+' · '+(ok?'✓ gültig':'✗ '+(cfg.figs[KING_SLOT]?'min '+DECK_MIN+' Karten':'König fehlt'))+'</div>';
     h+='</div>';}
   document.getElementById('deckPick').innerHTML=h;
   document.querySelectorAll('#deckPick [data-key]').forEach(b=>b.onclick=()=>{deckSel[+b.dataset.pl]=defaultDeckCfg(b.dataset.key);renderDeckMenu();});
@@ -1770,21 +1993,33 @@ function renderDeckMenu(){
   const both=cfgValid(deckSel[1])&&cfgValid(deckSel[2]);
   const ds=document.getElementById('deckStart');ds.disabled=!both;ds.style.opacity=both?'1':'.5';
 }
-let builderCfg=null, builderSide=1, builderTab='fig';
+let builderCfg=null, builderSide=1, builderTab='fig', builderOwned=null, builderOnDone=null, builderTitle=null;
 const FIG_SLOTS={pawn:[0,1,2,3,4,5,6,7],rook:[8,15],knight:[9,14],bishop:[10,13],queen:[11],king:[12]};
+function ownFig(t){return builderOwned?((builderOwned.figs&&builderOwned.figs[t])||0):Infinity;}
+function usedFig(t){let n=0;for(const x of builderCfg.figs)if(x===t)n++;return n;}
+function ownMove(cat){return builderOwned?((builderOwned.moves&&builderOwned.moves[cat])||0):Infinity;}
+function ownExtra(k){return builderOwned?((builderOwned.extra&&builderOwned.extra[k])||0):Infinity;}
 const BL_LETTER={8:'T',9:'S',10:'L',11:'D',12:'K',13:'L',14:'S',15:'T'};
 const RMO='<div class="mrm">✕</div>';
 function pieceNm(t){const p=ALL_PIECES.find(x=>x.t===t);return p?p.name:t;}
 function badgeCost(n){return '<span class="mbadge cost">◈'+n+'</span>';}
 function mcBox(cls,art,name,badge,over,attrs){return '<div class="mc '+cls+'"'+(attrs||'')+'><div class="mart">'+art+'</div><div class="mnm">'+name+'</div>'+badge+(over||'')+'</div>';}
 function mcFig(t,o){o=o||{};return mcBox('place'+(o.cls?' '+o.cls:''),'<img class="p'+builderSide+'" src="'+pieceSrc(PIECE_IMG[t])+'" alt="">',pieceNm(t),badgeCost(PLACE_COST[t]||0),o.over,o.attrs);}
-function mcMove(cat,o){o=o||{};return mcBox('move'+(o.cls?' '+o.cls:''),'<img src="'+pieceSrc(PIECE_IMG[CAT_BASE[cat]])+'" alt=""><span class="mglyph">↔</span>',CAT_NAME[cat]+' ziehen',badgeCost(MOVE_COST[CAT_BASE[cat]]),o.over,o.attrs);}
+function mcMove(cat,o){o=o||{};return mcBox('move'+(o.cls?' '+o.cls:''),'<img class="p'+builderSide+'" src="'+pieceSrc(PIECE_IMG[CAT_BASE[cat]])+'" alt=""><span class="mglyph">↔</span>',CAT_NAME[cat]+' ziehen',badgeCost(MOVE_COST[CAT_BASE[cat]]),o.over,o.attrs);}
 function mcField(key,o){o=o||{};return mcBox('field'+(o.cls?' '+o.cls:''),CARD_DEFS[key].ic,CARD_DEFS[key].nm,'<span class="mbadge once">1×</span>',o.over,o.attrs);}
 function figCatFull(cat){return FIG_SLOTS[cat].every(i=>builderCfg.figs[i]);}
-function openBuilder(side){builderSide=side;builderCfg=cfgClone(deckSel[side]);builderTab='fig';renderBuilder();document.getElementById('builderMenu').classList.add('show');}
-function deckCellsCards(arr,total,attr){const off=total-arr.length;let s='';
-  for(let i=0;i<total;i++){const idx=i-off;
-    if(idx>=0){const key=arr[idx];const mc=(attr==='rmmv')?mcMove(key.slice(3),{over:RMO}):mcField(key,{over:RMO});
+function openBuilder(side){builderSide=side;builderOwned=null;builderOnDone=null;builderTitle=null;builderCfg=cfgClone(deckSel[side]);builderTab='fig';renderBuilder();document.getElementById('builderMenu').classList.add('show');}
+function openCampBuilder(runIdx){
+  builderSide=1;builderOwned=campCol;builderTitle='🃏 Kampagnen-Deck – '+CAMPAIGNS[runIdx].emoji+' '+CAMPAIGNS[runIdx].name;
+  builderCfg=(campDeckByRun[runIdx]&&cfgValid(campDeckByRun[runIdx],CAMP_DECK_MIN))?cfgClone(campDeckByRun[runIdx]):campEmptyCfg();
+  builderTab='fig';
+  builderOnDone=(cfg)=>{campDeckByRun[runIdx]=cfg;campDecksSet();document.getElementById('campMenu').classList.add('show');campRunView(runIdx);};
+  document.getElementById('campMenu').classList.remove('show');
+  renderBuilder();document.getElementById('builderMenu').classList.add('show');
+}
+function deckCellsCards(arr,total,attr){let s='';   // linksbündig auffüllen: bestehende Karten behalten ihre Position
+  for(let i=0;i<total;i++){
+    if(i<arr.length){const key=arr[i];const mc=(attr==='rmmv')?mcMove(key.slice(3),{over:RMO}):mcField(key,{over:RMO});
       s+='<div class="bcell filled" data-'+attr+'="'+key+'">'+mc+'</div>';}
     else s+='<div class="bcell"></div>';}
   return s;}
@@ -1801,41 +2036,73 @@ function palItem(cardKey,attr,val,o){o=o||{};
   return '<div class="palcard'+(o.dis?' disabled':'')+'" data-'+attr+'="'+val+'"><div class="handcard">'+cardInnerHTML(cardKey,builderSide)+'</div>'+cnt+'</div>';}
 function paletteHTML(){const c=builderCfg;let s='';
   if(builderTab==='fig'){
-    for(const cat of CATS){s+='<div class="pcatlbl">'+CAT_NAME[cat]+'</div>';
+    for(const cat of CATS){
       const full=(cat!=='king'&&cat!=='queen')&&figCatFull(cat);
+      let items='';
       for(const t of CAT_VARIANTS[cat]){
-        const dis=(cat==='queen'&&c.figs[KING_SLOT]==='CU')||full;
-        s+=palItem('place'+t,'addfig',t,{dis:dis});}}
+        const own=ownFig(t);if(builderOwned&&own<=0)continue;
+        const rem=own-usedFig(t);
+        const dis=(cat==='queen'&&c.figs[KING_SLOT]==='CU')||full||(builderOwned&&rem<=0);
+        items+=palItem('place'+t,'addfig',t,{dis:dis,count:builderOwned?rem:0});}
+      if(items)s+='<div class="pcatlbl">'+CAT_NAME[cat]+'</div>'+items;}
     return s;}
   if(builderTab==='norm'){const full=cfgMoveCount(c)>=MOVE_MAX||cfgDeckSize(c)>=DECK_MAX;
-    for(const cat of CATS){const n=c.moves[cat]||0;
-      s+=palItem('mv_'+cat,'addmv',cat,{dis:full,count:n});}
+    for(const cat of CATS){const own=ownMove(cat);if(builderOwned&&own<=0)continue;
+      const n=c.moves[cat]||0;const dis=full||(builderOwned&&n>=own);
+      s+=palItem('mv_'+cat,'addmv',cat,{dis:dis,count:builderOwned?(own-n):n});}
     return s;}
   const efull=cfgExtraCount(c)>=EXTRA_MAX;
-  for(const key of FIELD_CARDS){const n=(c.extra&&c.extra[key])||0;
-    s+=palItem(key,'addex',key,{dis:efull,count:n});}
+  for(const key of FIELD_CARDS){const own=ownExtra(key);if(builderOwned&&own<=0)continue;
+    const n=(c.extra&&c.extra[key])||0;const dis=efull||(builderOwned&&n>=own);
+    s+=palItem(key,'addex',key,{dis:dis,count:builderOwned?(own-n):n});}
   return s;}
+function builderIsPortrait(){try{return window.matchMedia('(max-aspect-ratio: 4/5)').matches;}catch(e){return window.innerHeight>window.innerWidth*1.25;}}
 function renderBuilder(){
-  const c=builderCfg,ok=cfgValid(c);
-  document.getElementById('bTitle').textContent='Deckbuilder – '+(builderSide===1?'Weiß ♔':'Schwarz ♚');
-  document.getElementById('bStatus').innerHTML='Deck: <b>'+cfgDeckSize(c)+'</b>/'+DECK_MAX+' (min '+DECK_MIN+') · Extra: <b>'+cfgExtraCount(c)+'</b>/'+EXTRA_MAX+' · '+(ok?'<span style="color:#2f7d32">✓ gültig</span>':'<span style="color:#b33">✗ '+(c.figs[KING_SLOT]?(cfgDeckSize(c)<DECK_MIN?'zu klein':'zu groß'):'König-Slot muss belegt sein')+'</span>');
+  const c=builderCfg,bmin=builderOwned?CAMP_DECK_MIN:DECK_MIN,ok=cfgValid(c,bmin);
+  document.getElementById('bTitle').textContent=builderTitle||('Deckbuilder – '+(builderSide===1?'Weiß ♔':'Schwarz ♚'));
+  document.getElementById('bStatus').innerHTML='Deck: <b>'+cfgDeckSize(c)+'</b>/'+DECK_MAX+' (min '+bmin+') · Extra: <b>'+cfgExtraCount(c)+'</b>/'+EXTRA_MAX+' · '+(ok?'<span style="color:#2f7d32">✓ gültig</span>':'<span style="color:#b33">✗ '+(c.figs[KING_SLOT]?(cfgDeckSize(c)<bmin?'zu klein':'zu groß'):'König-Slot muss belegt sein')+'</span>');
   const moveArr=[];for(const cat of CATS)for(let i=0;i<(c.moves[cat]||0);i++)moveArr.push('mv_'+cat);
   const extraArr=[];for(const key of FIELD_CARDS){const n=(c.extra&&c.extra[key])||0;for(let i=0;i<n;i++)extraArr.push(key);}
-  let g='<div class="bwrap"><div class="bdeck">';
-  g+='<div class="bdlabel">Extra-Karten <b>'+extraArr.length+'</b>/'+EXTRA_MAX+'</div>';
-  g+='<div class="bcol">'+deckCellsCards(extraArr,MOVE_MAX,'rmex')+'</div>';
-  g+='<div class="bdlabel">Normal-Karten <b>'+moveArr.length+'</b></div>';
-  g+='<div class="bcol">'+deckCellsCards(moveArr,MOVE_MAX,'rmmv')+'</div>';
-  g+='<div class="bdlabel">Figuren <b>'+cfgFigCount(c)+'</b>/16'+(c.figs[KING_SLOT]?'':' <span class="warn">– König fehlt!</span>')+'</div>';
-  g+='<div class="bcol">'+deckCellsFig()+'</div>';
-  g+='</div><div class="bpal">';
-  g+='<div class="btabs"><div class="btab'+(builderTab==='fig'?' on':'')+'" data-tab="fig">Figuren</div>'
-    +'<div class="btab'+(builderTab==='norm'?' on':'')+'" data-tab="norm">Normalkarten</div>'
-    +'<div class="btab'+(builderTab==='extra'?' on':'')+'" data-tab="extra">Extrakarten</div></div>';
-  g+='<div class="bpalgrid">'+paletteHTML()+'</div>';
-  g+='<div class="bhint">Karte rechts anklicken → wandert links ins Deck. Karte im Deck anklicken zum Entfernen.</div>';
-  g+='</div></div>';
-  document.getElementById('bMain').innerHTML=g;
+  const bm=document.getElementById('bMain');
+  let g;
+  if(builderIsPortrait()){
+    // Handy: immer nur EIN Deck (Figuren / Normal / Extra) + zugehörige Auswahl darunter
+    let sec;
+    if(builderTab==='norm')       sec='<div class="bdlabel">Normal-Karten <b>'+moveArr.length+'</b></div><div class="bcol bcolmob">'+deckCellsCards(moveArr,MOVE_MAX,'rmmv')+'</div>';
+    else if(builderTab==='extra') sec='<div class="bdlabel">Extra-Karten <b>'+extraArr.length+'</b>/'+EXTRA_MAX+'</div><div class="bcol bcolmob">'+deckCellsCards(extraArr,MOVE_MAX,'rmex')+'</div>';
+    else                          sec='<div class="bdlabel">Figuren <b>'+cfgFigCount(c)+'</b>/16'+(c.figs[KING_SLOT]?'':' <span class="warn">– König fehlt!</span>')+'</div><div class="bcol bcolmob">'+deckCellsFig()+'</div>';
+    g='<div class="bwrap mob">'
+      +'<div class="btabs"><div class="btab'+(builderTab==='fig'?' on':'')+'" data-tab="fig">Figuren</div>'
+        +'<div class="btab'+(builderTab==='norm'?' on':'')+'" data-tab="norm">Normal</div>'
+        +'<div class="btab'+(builderTab==='extra'?' on':'')+'" data-tab="extra">Extra</div></div>'
+      +'<div class="bmobdeck">'+sec+'</div>'
+      +'<div class="bpalhead">Auswahl – antippen zum Hinzufügen</div>'
+      +'<div class="bpalgrid">'+paletteHTML()+'</div>'
+      +'<div class="bhint">Oben Deck wählen · Karte unten antippen → ins Deck. Karte oben antippen = entfernen.</div>'
+      +'</div>';
+  }else{
+    g='<div class="bwrap"><div class="bdeck">';
+    g+='<div class="bdlabel">Figuren <b>'+cfgFigCount(c)+'</b>/16'+(c.figs[KING_SLOT]?'':' <span class="warn">– König fehlt!</span>')+'</div>';
+    g+='<div class="bcol">'+deckCellsFig()+'</div>';
+    g+='<div class="bdlabel">Normal-Karten <b>'+moveArr.length+'</b></div>';
+    g+='<div class="bcol">'+deckCellsCards(moveArr,MOVE_MAX,'rmmv')+'</div>';
+    g+='<div class="bdlabel">Extra-Karten <b>'+extraArr.length+'</b>/'+EXTRA_MAX+'</div>';
+    g+='<div class="bcol">'+deckCellsCards(extraArr,MOVE_MAX,'rmex')+'</div>';
+    g+='</div><div class="bpal">';
+    g+='<div class="btabs"><div class="btab'+(builderTab==='fig'?' on':'')+'" data-tab="fig">Figuren</div>'
+      +'<div class="btab'+(builderTab==='norm'?' on':'')+'" data-tab="norm">Normalkarten</div>'
+      +'<div class="btab'+(builderTab==='extra'?' on':'')+'" data-tab="extra">Extrakarten</div></div>';
+    g+='<div class="bpalgrid">'+paletteHTML()+'</div>';
+    g+='<div class="bhint">Karte rechts anklicken → wandert links ins Deck. Karte im Deck anklicken zum Entfernen.</div>';
+    g+='</div></div>';
+  }
+  const sMain=bm.scrollTop;
+  const oldDeck=bm.querySelector('.bdeck'), oldPal=bm.querySelector('.bpal');
+  const sDeck=oldDeck?oldDeck.scrollTop:0, sPal=oldPal?oldPal.scrollTop:0;
+  bm.innerHTML=g;
+  bm.scrollTop=sMain;
+  const nDeck=bm.querySelector('.bdeck'), nPal=bm.querySelector('.bpal');
+  if(nDeck)nDeck.scrollTop=sDeck; if(nPal)nPal.scrollTop=sPal;
   document.querySelectorAll('#bMain [data-tab]').forEach(b=>b.onclick=()=>{builderTab=b.dataset.tab;renderBuilder();});
   document.querySelectorAll('#bMain [data-addfig]').forEach(b=>b.onclick=()=>addFigure(b.dataset.addfig));
   document.querySelectorAll('#bMain [data-addmv]').forEach(b=>b.onclick=()=>changeMove(b.dataset.addmv,1));
@@ -1846,16 +2113,22 @@ function renderBuilder(){
   const bd=document.getElementById('bDone');bd.disabled=!ok;bd.style.opacity=ok?'1':'.5';
 }
 function addFigure(t){const c=builderCfg,cat=CAT_OF[t];if(!cat)return;
+  if(builderOwned&&usedFig(t)>=ownFig(t))return;
   if(t==='CU'){c.figs[KING_SLOT]='CU';c.figs[QUEEN_SLOT]=null;renderBuilder();return;}
   if(cat==='king'){c.figs[KING_SLOT]=t;renderBuilder();return;}
   if(cat==='queen'){if(c.figs[KING_SLOT]==='CU')return;c.figs[QUEEN_SLOT]=t;renderBuilder();return;}
   const free=FIG_SLOTS[cat].find(i=>!c.figs[i]);if(free===undefined)return;
   c.figs[free]=t;renderBuilder();
 }
-function changeMove(cat,d){const c=builderCfg,n=(c.moves[cat]||0)+d;if(n<0)return;if(d>0&&(cfgMoveCount(c)>=MOVE_MAX||cfgDeckSize(c)>=DECK_MAX))return;c.moves[cat]=n;renderBuilder();}
-function changeExtra(key,d){const c=builderCfg;if(!c.extra)c.extra={};const n=(c.extra[key]||0)+d;if(n<0)return;if(d>0&&cfgExtraCount(c)>=EXTRA_MAX)return;c.extra[key]=n;if(!n)delete c.extra[key];renderBuilder();}
-document.getElementById('bDone').addEventListener('click',()=>{if(!cfgValid(builderCfg))return;deckSel[builderSide]=cfgClone(builderCfg);document.getElementById('builderMenu').classList.remove('show');renderDeckMenu();});
-document.getElementById('bReset').addEventListener('click',()=>{builderCfg=defaultDeckCfg('klassik');renderBuilder();});
+function changeMove(cat,d){const c=builderCfg,n=(c.moves[cat]||0)+d;if(n<0)return;if(d>0&&(cfgMoveCount(c)>=MOVE_MAX||cfgDeckSize(c)>=DECK_MAX))return;if(d>0&&builderOwned&&(c.moves[cat]||0)>=ownMove(cat))return;c.moves[cat]=n;renderBuilder();}
+function changeExtra(key,d){const c=builderCfg;if(!c.extra)c.extra={};const n=(c.extra[key]||0)+d;if(n<0)return;if(d>0&&cfgExtraCount(c)>=EXTRA_MAX)return;if(d>0&&builderOwned&&(c.extra[key]||0)>=ownExtra(key))return;c.extra[key]=n;if(!n)delete c.extra[key];renderBuilder();}
+document.getElementById('bDone').addEventListener('click',()=>{if(!cfgValid(builderCfg,builderOwned?CAMP_DECK_MIN:DECK_MIN))return;
+  document.getElementById('builderMenu').classList.remove('show');
+  if(builderOnDone){const cb=builderOnDone,cfg=cfgClone(builderCfg);builderOnDone=null;builderOwned=null;builderTitle=null;cb(cfg);}
+  else{deckSel[builderSide]=cfgClone(builderCfg);renderDeckMenu();}});
+document.getElementById('bReset').addEventListener('click',()=>{builderCfg=builderOwned?campEmptyCfg():defaultDeckCfg('klassik');renderBuilder();});
+let builderWasPortrait=null;
+window.addEventListener('resize',()=>{if(!document.getElementById('builderMenu').classList.contains('show'))return;const p=builderIsPortrait();if(p!==builderWasPortrait){builderWasPortrait=p;renderBuilder();}});
 document.getElementById('btnCampaign').addEventListener('click',openCampaign);
 document.getElementById('btnLocal').addEventListener('click',()=>openDeckMenu('local'));
 document.getElementById('btnCpu').addEventListener('click',()=>openDeckMenu('cpu'));
